@@ -12,6 +12,7 @@ builder.Services.AddHostedService<McuServer>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<SubscriptionService>());
 
 var app = builder.Build();
+app.UseDefaultFiles();
 app.UseStaticFiles();
 app.MapHub<X32Hub>("/hub");
 app.MapGet("/api/state", (X32StateService svc) => Results.Json(svc.State));
