@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X32 Rack Emulator</title>
+    <link rel="stylesheet" href="x32.css">
+</head>
+<body>
+    <div id="app">
+        <header class="x32-header">
+            <div class="logo">BEHRINGER X32 RACK</div>
+            <div class="page-buttons">
+                <button class="page-btn active" data-page="ch1">Ch 1-8</button>
+                <button class="page-btn" data-page="ch9">Ch 9-16</button>
+                <button class="page-btn" data-page="ch17">Ch 17-24</button>
+                <button class="page-btn" data-page="ch25">Ch 25-32</button>
+                <button class="page-btn" data-page="fxrtn">FX Rtn</button>
+                <button class="page-btn" data-page="buses">Buses</button>
+                <button class="page-btn" data-page="matrix">Matrix</button>
+                <button class="page-btn" data-page="dca">DCA</button>
+            </div>
+            <div class="connection-status" id="connStatus">&#x26A1; Connecting...</div>
+        </header>
+
+        <div class="mixer-body">
+            <div class="channel-area" id="channelArea">
+                <!-- Channel strips rendered by JS -->
+            </div>
+            <div class="master-section">
+                <div class="master-strip">
+                    <div class="strip-label">MAIN LR</div>
+                    <div class="meter-container">
+                        <div class="meter" id="main-meter-l"></div>
+                        <div class="meter" id="main-meter-r"></div>
+                    </div>
+                    <div class="fader-container">
+                        <input type="range" class="fader vertical-fader" id="main-fader"
+                               min="0" max="1023" value="768" data-path="/main/st/mix/fader">
+                    </div>
+                    <button class="mute-btn" id="main-mute" data-path="/main/st/mix/on">MUTE</button>
+                    <div class="fader-value" id="main-fader-val">0dB</div>
+                </div>
+                <div class="scene-panel">
+                    <div class="scene-title">SCENE</div>
+                    <div class="scene-current" id="sceneDisplay">---</div>
+                    <button onclick="loadSceneList()">&#x1F4C2; Scenes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"
+            integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb"
+            crossorigin="anonymous"></script>
+    <script src="x32.js"></script>
+</body>
+</html>

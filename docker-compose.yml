@@ -1,0 +1,13 @@
+services:
+  x32emu:
+    build: .
+    ports:
+      - "8080:8080"
+      - "10023:10023/udp"
+      - "10111:10111"
+    volumes:
+      - ./data/scenes:/data/scenes
+      - ./data/audio:/data/audio
+    environment:
+      - X32_NAME=X32EMU
+      - X32_IP=0.0.0.0
