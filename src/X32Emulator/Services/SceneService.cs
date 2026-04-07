@@ -30,8 +30,7 @@ public class SceneService
             var safeName = Path.GetFileName(name);
             if (string.IsNullOrEmpty(safeName) || safeName != name) return;
             var path = Path.GetFullPath(Path.Combine(ScenesDir, safeName));
-            if (!path.StartsWith(Path.GetFullPath(ScenesDir) + Path.DirectorySeparatorChar, StringComparison.Ordinal) &&
-                !path.Equals(Path.GetFullPath(ScenesDir), StringComparison.Ordinal)) return;
+            if (!path.StartsWith(Path.GetFullPath(ScenesDir) + Path.DirectorySeparatorChar, StringComparison.Ordinal)) return;
             if (!File.Exists(path)) return;
             foreach (var line in File.ReadLines(path))
             {
