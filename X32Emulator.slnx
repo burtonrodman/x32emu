@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/X32Emulator.Tests/X32Emulator.Tests.csproj" />
+    <Project Path="src/X32Emulator/X32Emulator.csproj" />
+  </Folder>
+</Solution>
