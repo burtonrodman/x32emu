@@ -10,6 +10,7 @@ builder.Services.AddSingleton<SceneService>();
 builder.Services.AddHostedService<OscServer>();
 builder.Services.AddHostedService<McuServer>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<SubscriptionService>());
+builder.Services.AddHostedService<StatePersistenceService>();
 
 var app = builder.Build();
 app.UseDefaultFiles();

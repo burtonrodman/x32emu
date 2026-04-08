@@ -5,7 +5,12 @@ namespace X32Emulator.Services;
 
 public class X32StateService
 {
-    public X32State State { get; } = new();
+    public X32State State { get; private set; } = new();
+
+    public void RestoreState(X32State state)
+    {
+        State = state;
+    }
     public event Action<string, List<OscArg>>? OnStateChanged;
 
     public OscArg? GetValue(string path)
