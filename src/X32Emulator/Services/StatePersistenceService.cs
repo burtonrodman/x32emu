@@ -16,12 +16,15 @@ public class StatePersistenceService : IHostedService
     };
 
     private readonly X32StateService _stateService;
+    private readonly ILogger<StatePersistenceService> _logger;
     private Timer? _debounceTimer;
     private readonly object _timerLock = new();
+    private CancellationTokenSource _shutdownCts = new();
 
-    public StatePersistenceService(X32StateService stateService)
+    public StatePersistenceService(X32StateService stateService, ILogger<StatePersistenceService> logger)
     {
         _stateService = stateService;
+        _logger = logger;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -36,6 +39,7 @@ public class StatePersistenceService : IHostedService
         _stateService.OnStateChanged -= OnStateChanged;
         lock (_timerLock)
         {
+            _shutdownCts.Cancel();
             _debounceTimer?.Dispose();
             _debounceTimer = null;
         }
@@ -47,8 +51,13 @@ public class StatePersistenceService : IHostedService
     {
         lock (_timerLock)
         {
+            if (_shutdownCts.IsCancellationRequested) return;
             _debounceTimer?.Dispose();
-            _debounceTimer = new Timer(_ => SaveState(), null, TimeSpan.FromSeconds(2), Timeout.InfiniteTimeSpan);
+            _debounceTimer = new Timer(_ =>
+            {
+                if (!_shutdownCts.IsCancellationRequested)
+                    SaveState();
+            }, null, TimeSpan.FromSeconds(2), Timeout.InfiniteTimeSpan);
         }
     }
 
@@ -60,9 +69,15 @@ public class StatePersistenceService : IHostedService
             var json = File.ReadAllText(StateFilePath);
             var state = JsonSerializer.Deserialize<X32State>(json, SerializerOptions);
             if (state != null)
+            {
                 _stateService.RestoreState(state);
+                _logger.LogInformation("Restored state from {Path}", StateFilePath);
+            }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load state from {Path}", StateFilePath);
+        }
     }
 
     private void SaveState()
@@ -75,8 +90,12 @@ public class StatePersistenceService : IHostedService
             var tmpPath = StateFilePath + ".tmp";
             File.WriteAllText(tmpPath, json);
             File.Move(tmpPath, StateFilePath, overwrite: true);
+            _logger.LogDebug("Saved state to {Path}", StateFilePath);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save state to {Path}", StateFilePath);
+        }
     }
 }
 
